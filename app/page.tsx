@@ -44,7 +44,9 @@ export default function QuoteGenerator() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-black p-4 relative">
+    <div className="flex flex-col items-center justify-between min-h-screen bg-black p-4 py-10 overflow-hidden">
+      <div className="flex-grow" /> {/* Spacer at top */}
+      
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -53,16 +55,19 @@ export default function QuoteGenerator() {
       >
         <p style={{ fontSize }} className="font-semibold text-white italic">{quote}</p>
       </motion.div>
-      {showLogo && (
-        <motion.img
-          src="/images/inspi-tap_logo.png"
-          alt="Logo"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2 }}
-          className="absolute bottom-10 h-1/10 w-auto"
-        />
-      )}
+      
+      <div className="flex-grow flex items-end justify-center w-full mt-6">
+        {showLogo && (
+          <motion.img
+            src="/images/inspi-tap_logo.png"
+            alt="Logo"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2 }}
+            className="h-12 w-auto mb-6"
+          />
+        )}
+      </div>
     </div>
   );
 }
