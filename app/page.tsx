@@ -22,31 +22,44 @@ export default function QuoteGenerator() {
   const [fontSize, setFontSize] = useState("text-xl");
 
   useEffect(() => {
+    // Set random quote
     setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    
+    // Show logo after delay
     const timer = setTimeout(() => {
       setShowLogo(true);
     }, 2000);
 
+    // Handle viewport sizing
     const handleResize = () => {
       const screenHeight = window.innerHeight;
-      // Calculate font size as a percentage of the screen height, adjusting the multiplier as needed
-      const newFontSize = `${Math.min(24, screenHeight * 0.03)}px`; // Adjust 0.05 multiplier as necessary
+      const newFontSize = `${Math.min(24, screenHeight * 0.03)}px`;
       setFontSize(newFontSize);
     };
 
-    handleResize(); // Set initial font size based on current screen height
-    window.addEventListener("resize", handleResize); // Update font size on window resize
+    // Initial setup
+    handleResize();
+    
+    // Prevent body scrolling
+    document.body.style.overflow = "hidden";
+    
+    // Update on resize
+    window.addEventListener("resize", handleResize);
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener("resize", handleResize);
+      // Restore scrolling when component unmounts
+      document.body.style.overflow = "";
     };
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen bg-black p-4 py-10 overflow-hidden">
-      <div className="flex-grow" /> {/* Spacer at top */}
+    <div className="fixed inset-0 flex flex-col items-center justify-between bg-black p-4">
+      {/* Top spacer */}
+      <div className="flex-1" />
       
+      {/* Quote */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -56,7 +69,8 @@ export default function QuoteGenerator() {
         <p style={{ fontSize }} className="font-semibold text-white italic">{quote}</p>
       </motion.div>
       
-      <div className="flex-grow flex items-end justify-center w-full mt-6">
+      {/* Bottom section with logo */}
+      <div className="flex-1 flex flex-col justify-end items-center w-full pb-8">
         {showLogo && (
           <motion.img
             src="/images/inspi-tap_logo.png"
@@ -64,7 +78,7 @@ export default function QuoteGenerator() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 2 }}
-            className="h-12 w-auto mb-6"
+            className="h-10 w-auto"
           />
         )}
       </div>
