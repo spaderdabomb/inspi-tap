@@ -2,28 +2,64 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Moon, Sun, Globe } from "lucide-react";
 
 const quotes = [
-  "The only limit to our realization of tomorrow is our doubts of today.",
-  "Do what you can, with what you have, where you are.",
-  "Happiness depends upon ourselves.",
-  "Change your thoughts and you change your world.",
-  "Success is not final, failure is not fatal: it is the courage to continue that counts.",
-  "Believe you can and you're halfway there.",
-  "Act as if what you do makes a difference. It does.",
-  "It is not length of life, but depth of life.",
-  "The best way to predict the future is to create it.",
-  "Keep your face always toward the sunshine—and shadows will fall behind you."
+  { 
+    english: { text: "\"The only limit to our realization of tomorrow is our doubts of today.\"", author: "Franklin D. Roosevelt" },
+    spanish: { text: "\"El único límite para nuestra realización del mañana son nuestras dudas de hoy.\"", author: "Franklin D. Roosevelt" }
+  },
+  { 
+    english: { text: "\"Do what you can, with what you have, where you are.\"", author: "Theodore Roosevelt" },
+    spanish: { text: "\"Haz lo que puedas, con lo que tengas, donde estés.\"", author: "Theodore Roosevelt" }
+  },
+  { 
+    english: { text: "\"Happiness depends upon ourselves.\"", author: "Aristotle" },
+    spanish: { text: "\"La felicidad depende de nosotros mismos.\"", author: "Aristóteles" }
+  },
+  { 
+    english: { text: "\"Change your thoughts and you change your world.\"", author: "Norman Vincent Peale" },
+    spanish: { text: "\"Cambia tus pensamientos y cambiarás tu mundo.\"", author: "Norman Vincent Peale" }
+  },
+  { 
+    english: { text: "\"Success is not final, failure is not fatal: it is the courage to continue that counts.\"", author: "Winston Churchill" },
+    spanish: { text: "\"El éxito no es definitivo, el fracaso no es fatal: es el coraje para continuar lo que cuenta.\"", author: "Winston Churchill" }
+  },
+  { 
+    english: { text: "\"Believe you can and you're halfway there.\"", author: "Theodore Roosevelt" },
+    spanish: { text: "\"Cree que puedes y ya estás a medio camino.\"", author: "Theodore Roosevelt" }
+  },
+  { 
+    english: { text: "\"Act as if what you do makes a difference. It does.\"", author: "William James" },
+    spanish: { text: "\"Actúa como si lo que haces marca la diferencia. Lo hace.\"", author: "William James" }
+  },
+  { 
+    english: { text: "\"It is not length of life, but depth of life.\"", author: "Ralph Waldo Emerson" },
+    spanish: { text: "\"No es la longitud de la vida, sino la profundidad de la vida.\"", author: "Ralph Waldo Emerson" }
+  },
+  { 
+    english: { text: "\"The best way to predict the future is to create it.\"", author: "Abraham Lincoln" },
+    spanish: { text: "\"La mejor manera de predecir el futuro es creándolo.\"", author: "Abraham Lincoln" }
+  },
+  { 
+    english: { text: "\"Keep your face always toward the sunshine—and shadows will fall behind you.\"", author: "Walt Whitman" },
+    spanish: { text: "\"Mantén tu rostro siempre hacia el sol y las sombras caerán detrás de ti.\"", author: "Walt Whitman" }
+  }
 ];
 
 export default function QuoteGenerator() {
-  const [quote, setQuote] = useState("");
+  const [quote, setQuote] = useState({ text: "", author: "" });
   const [showLogo, setShowLogo] = useState(false);
   const [fontSize, setFontSize] = useState("text-xl");
+  const [darkMode, setDarkMode] = useState(true);
+  const [language, setLanguage] = useState("english"); // "english" or "spanish"
+  const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
     // Set random quote
-    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    setQuoteIndex(randomIndex);
+    setQuote(quotes[randomIndex][language]);
     
     // Show logo after delay
     const timer = setTimeout(() => {
@@ -54,34 +90,133 @@ export default function QuoteGenerator() {
     };
   }, []);
 
+  // Update quote when language changes
+  useEffect(() => {
+    setQuote(quotes[quoteIndex][language]);
+  }, [language, quoteIndex]);
+
+  // Toggle theme function
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
+
+  // Toggle language function
+  const toggleLanguage = () => {
+    setLanguage(language === "english" ? "spanish" : "english");
+  };
+
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-between bg-black p-4">
-      {/* Top spacer */}
-      <div className="flex-1" />
+    <div 
+      className="fixed inset-0 flex flex-col items-center justify-between p-4"
+      style={{
+        backgroundImage: `url(/images/${darkMode ? 'black_bg.png' : 'white_bg.png'})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        color: darkMode ? 'white' : 'black',
+        transition: 'background-image 0.5s ease'
+      }}
+    >
+      {/* Theme toggle in top left */}
+      <div className="self-start">
+        <button 
+          onClick={toggleTheme}
+          className="flex items-center space-x-2 rounded-full p-2 shadow-md"
+          style={{
+            backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <div className="relative w-12 h-6 rounded-full transition-colors duration-300"
+               style={{ backgroundColor: darkMode ? '#222222' : '#e2e8f0' }}>
+            <div 
+              className="absolute top-1 left-1 w-4 h-4 rounded-full transition-transform duration-300"
+              style={{ 
+                backgroundColor: '#fff',
+                transform: darkMode ? 'translateX(0)' : 'translateX(24px)'
+              }}
+            />
+            <div className="absolute top-0.5 left-0.5 w-5 h-5 flex items-center justify-center">
+              {darkMode && <Moon size={12} color="#000" />}
+            </div>
+            <div className="absolute top-0.5 right-0.5 w-5 h-5 flex items-center justify-center">
+              {!darkMode && <Sun size={12} color="#000" />}
+            </div>
+          </div>
+        </button>
+      </div>
       
       {/* Quote */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2 }}
-        className="bg-transparent p-6 text-center max-w-lg"
-      >
-        <p style={{ fontSize }} className="font-semibold text-white italic">{quote}</p>
-      </motion.div>
-      
-      {/* Bottom section with logo */}
-      <div className="flex-1 flex flex-col justify-end items-center w-full pb-8">
-        {showLogo && (
-          <motion.img
-            src="/images/inspi-tap_logo.png"
-            alt="Logo"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2 }}
-            className="h-10 w-auto"
-          />
-        )}
+      <div className="flex items-center justify-center h-screen w-full">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2 }}
+          className="bg-transparent p-6 text-center max-w-lg"
+          style={{
+            backgroundColor: darkMode ? 'rgba(0, 0, 0, 0)' : 'rgba(255, 255, 255, 0)',
+            borderRadius: '12px'
+          }}
+        >
+          <p 
+            style={{ 
+              fontSize, 
+              textShadow: darkMode 
+                ? "2px 2px 4px black" 
+                : "2px 2px 4px white"
+            }} 
+            className="font-semibold italic"
+          >
+            {quote.text}
+            <br />
+            <span className="font-normal not-italic mt-2 block">— {quote.author}</span>
+          </p>
+        </motion.div>
       </div>
+      
+      {/* Bottom section with logo and language toggle */}
+      <div className="flex justify-between items-end w-full pb-8">
+        {/* Logo centered */}
+        <div className="flex-1 flex justify-center">
+          {showLogo && (
+            <motion.img
+              src={darkMode ? "/images/inspi-tap_white.png" : "/images/inspi-tap_black.png"}
+              alt="Logo"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 2 }}
+              className="absolute bottom-10 h-1/7 w-auto"
+              />
+          )}
+        </div>
+
+        {/* Language Toggle on right side */}
+        <div className="flex items-center space-x-3 absolute right-8 bottom-8">
+          <span className="text-sm font-bold">EN</span>
+          <div 
+            className="p-2 rounded-full shadow-md flex items-center justify-center"
+            style={{
+              backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <button 
+              onClick={toggleLanguage}
+              className="relative w-12 h-6 flex items-center rounded-full transition-colors duration-300"
+              style={{ backgroundColor: darkMode ? '#222222' : '#e2e8f0' }}
+            >
+              <div 
+                className="absolute top-0 left-0 w-6 h-6 rounded-full transition-transform duration-300"
+                style={{ 
+                  backgroundImage: `url(${language === 'english' ? '/images/usa_flag.png' : '/images/spain_flag.png'})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  transform: language === 'english' ? 'translateX(0px)' : 'translateX(24px)'
+                }}
+              />
+            </button>
+          </div>
+          <span className="text-sm font-bold">ES</span>
+        </div>
+      </div>
+
     </div>
   );
 }
