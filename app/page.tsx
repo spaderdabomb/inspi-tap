@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Globe } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 
 const quotes = [
   { 
@@ -52,7 +52,7 @@ export default function QuoteGenerator() {
   const [showLogo, setShowLogo] = useState(false);
   const [fontSize, setFontSize] = useState("text-xl");
   const [darkMode, setDarkMode] = useState(true);
-  const [language, setLanguage] = useState("english"); // "english" or "spanish"
+  const [language, setLanguage] = useState<"english" | "spanish">("english");  // Explicitly typing language as 'english' | 'spanish'
   const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
