@@ -54,6 +54,8 @@ export default function QuoteGenerator() {
   const [darkMode, setDarkMode] = useState(true);
   const [language, setLanguage] = useState<"english" | "spanish">("english");  // Explicitly typing language as 'english' | 'spanish'
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const [imagesPreloaded, setImagesPreloaded] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(false); // New state for orientation
 
   useEffect(() => {
     // Set random quote
@@ -66,12 +68,45 @@ export default function QuoteGenerator() {
       setShowLogo(true);
     }, 2000);
 
-    // Handle viewport sizing
     const handleResize = () => {
+      const isCurrentlyPortrait = window.innerHeight > window.innerWidth;
+      setIsPortrait(isCurrentlyPortrait); // Update orientation state
       const screenHeight = window.innerHeight;
       const newFontSize = `${Math.min(24, screenHeight * 0.03)}px`;
       setFontSize(newFontSize);
     };
+
+    // Preload images
+    const preloadImages = async () => {
+      const imagePaths = [
+        "/images/inspi-tap_white.png",
+        "/images/inspi-tap_black.png",
+        "/images/usa_flag.png",
+        "/images/spain_flag.png",
+        "/images/black_bg_phone.png", // New phone image
+        "/images/white_bg_phone.png", // New phone image
+      ];
+
+      try {
+        await Promise.all(
+          imagePaths.map((path) => {
+            return new Promise((resolve, reject) => {
+              const img = new Image();
+              img.src = path;
+              img.onload = resolve;
+              img.onerror = reject; // Handle errors if needed
+            });
+          })
+        );
+        setImagesPreloaded(true); // Set state after successful preloading
+      } catch (error) {
+        console.error("Error preloading images:", error);
+        // Consider a fallback, like displaying placeholder images
+      }
+    };
+
+
+    preloadImages(); // Call the preloading function
 
     // Initial setup
     handleResize();
@@ -105,11 +140,21 @@ export default function QuoteGenerator() {
     setLanguage(language === "english" ? "spanish" : "english");
   };
 
+  const backgroundImage = isPortrait
+  ? `/images/${darkMode ? "black_bg_phone.png" : "white_bg_phone.png"}`
+  : `/images/${darkMode ? "black_bg.png" : "white_bg.png"}`;
+
+  console.log(isPortrait)
+  
+  if (!imagesPreloaded) {
+    return <div>Loading...</div>; // Or a more sophisticated loading indicator
+  }
+
   return (
     <div 
       className="fixed inset-0 flex flex-col items-center justify-between p-4"
       style={{
-        backgroundImage: `url(/images/${darkMode ? 'black_bg.png' : 'white_bg.png'})`,
+        backgroundImage: `url(${backgroundImage})`, // Use dynamic image path
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: darkMode ? 'white' : 'black',
