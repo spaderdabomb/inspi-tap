@@ -287,7 +287,7 @@ export default function QuoteGenerator() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 2 }}
-              className="absolute bottom-10 h-1/7 w-auto"
+              className="absolute bottom-0 h-1/7 w-auto"
             />
           )}
         </div>
